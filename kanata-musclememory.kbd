@@ -13,10 +13,9 @@
 (defchordsv2
   (esc 1) (layer-switch base) 300 all-released ()    ;; home row mods on
   (esc 2) (layer-switch nomods) 300 all-released ()  ;; home row mods off
-  (w e) esc 300 all-released ()
-  (i o) ret 300 all-released ()
   (spc v) (layer-toggle system) 300 all-released ()    ;; system layer
   (spc m) (layer-toggle system) 300 all-released ()    ;; system layer
+  (lalt ralt) (multi caps @tap) 300 all-released ()    ;; CapsLock
 )
 
 (defsrc
