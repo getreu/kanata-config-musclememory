@@ -2,27 +2,43 @@
 ;; Guide](https://dev.to/shanu-kumawat/how-to-set-up-kanata-on-nixos-a-step-by-step-guide-1jkc)
 
 (defcfg
+   alias-to-trigger-on-load to-nomods
    process-unmapped-keys yes
-   delegate-to-first-layer no
+   delegate-to-first-layer yes
    log-layer-changes no
    ;; For defchordsv2
    concurrent-tap-hold     yes
    allow-hardware-repeat   no
 )
 
+(defalias toggle-numpad
+  (switch
+    ;; If current base is base, switch to target layer
+    ((base-layer numpad)) (layer-switch base) break
+
+    ;; Otherwise, switch back to base
+    () (layer-switch numpad) break
+  )
+)
+
+(defalias toggle-symbol
+  (switch
+    ;; If current base is base, switch to target layer
+    ((base-layer symb-flat)) (layer-switch base) break
+
+    ;; Otherwise, switch back to base
+    () (layer-switch symb-flat) break
+  )
+)
+
 (defchordsv2
   (esc 1) (layer-switch base) 300 all-released ()    ;; home row mods on
   (esc 2) (layer-switch nomods) 300 all-released ()  ;; home row mods off
-  (spc v) (layer-toggle system) 300 all-released ()    ;; system layer
-  (spc m) (layer-toggle system) 300 all-released ()    ;; system layer
-  (lalt ralt) (multi caps @tap) 300 all-released ()    ;; CapsLock
-)
-
-(defsrc
-    q w e r t   y u i o p
-    a s d f g   h j k l ;
-    z x c v b   n m , . / 
-    esc tab caps del lsft lmet lalt spc ralt rmet rsft prtsc
+  (spc v) (layer-while-held system) 300 all-released ()    ;; system layer
+  (spc m) (layer-while-held system) 300 all-released ()    ;; system layer
+  (lalt ralt) @toggle-symbol 500 all-released ()    ;; symbols layer
+  (lmet rmet) (multi caps @tap) 500 all-released ()     ;; CapsLock
+  (lmet prtsc) (multi caps @tap) 500 all-released ()    ;; CapsLock
 )
 
 (defvar
@@ -57,10 +73,12 @@
     (on-idle-fakekey to-base tap 20)
   )
 
+  to-nomods (layer-switch nomods)
+
   ;; Home row for the base layer
   a (tap-hold-release-keys $tap-time $hold-pinky (multi a @tap) lsft $left-hand-keys)
   s (tap-hold-release-keys $tap-time $hold-ring (multi s @tap) ralt $left-hand-keys)
-  d (tap-hold-release-keys $tap-time $hold-middle (multi d @tap) (layer-toggle symb) $left-hand-keys)
+  d (tap-hold-release-keys $tap-time $hold-middle (multi d @tap) (layer-while-held symb) $left-hand-keys)
   f (tap-hold-release-keys $tap-time $hold-index (multi f @tap) lctl $left-hand-keys)
   g (tap-hold-release-keys $tap-time $hold-index (multi g @tap) lalt $left-hand-keys)
   v (tap-hold-release-keys $tap-time $hold-index (multi v @tap) rmet $left-hand-keys)
@@ -68,7 +86,7 @@
   m (tap-hold-release-keys $tap-time $hold-index (multi m @tap) rmet $right-hand-keys)
   h (tap-hold-release-keys $tap-time $hold-index (multi h @tap) lalt $right-hand-keys)
   j (tap-hold-release-keys $tap-time $hold-index (multi j @tap) rctl $right-hand-keys)
-  k (tap-hold-release-keys $tap-time $hold-middle (multi k @tap) (layer-toggle symb) $right-hand-keys)
+  k (tap-hold-release-keys $tap-time $hold-middle (multi k @tap) (layer-while-held symb) $right-hand-keys)
   l (tap-hold-release-keys $tap-time $hold-ring (multi l @tap) ralt $right-hand-keys)
   ; (tap-hold-release-keys $tap-time $hold-pinky (multi ; @tap) rsft $right-hand-keys)
 
@@ -76,7 +94,7 @@
   ;; Home row for the symb layer
   a2 (tap-hold-release-keys $tap-time $hold-pinky (multi esc @tap) lsft $left-hand-keys)
   s2 (tap-hold-release-keys $tap-time $hold-ring (multi ins @tap) ralt $left-hand-keys)
-  d2 (tap-hold-release-keys $tap-time $hold-middle (multi del @tap) (layer-toggle symb) $left-hand-keys)
+  d2 (tap-hold-release-keys $tap-time $hold-middle (multi del @tap) (layer-while-held symb) $left-hand-keys)
   f2 (tap-hold-release-keys $tap-time $hold-index (multi tab @tap) lctl $left-hand-keys)
   g2 (tap-hold-release-keys $tap-time $hold-index (multi bspc @tap) lalt $left-hand-keys)
   v2 (tap-hold-release-keys $tap-time $hold-index (multi [ @tap) rmet $left-hand-keys)
@@ -84,12 +102,12 @@
   m2 (tap-hold-release-keys $tap-time $hold-index (multi ' @tap) rmet $right-hand-keys)
   h2 (tap-hold-release-keys $tap-time $hold-index (multi left @tap) lalt $right-hand-keys)
   j2 (tap-hold-release-keys $tap-time $hold-index (multi down @tap) rctl $right-hand-keys)
-  k2 (tap-hold-release-keys $tap-time $hold-middle (multi up @tap) (layer-toggle symb) $right-hand-keys)
+  k2 (tap-hold-release-keys $tap-time $hold-middle (multi up @tap) (layer-while-held symb) $right-hand-keys)
   l2 (tap-hold-release-keys $tap-time $hold-ring (multi right @tap) ralt $right-hand-keys)
   ;2 (tap-hold-release-keys $tap-time $hold-pinky (multi ret @tap) rsft $right-hand-keys)
 
-
-  ;; Home row for the function
+  
+  ;; Home row for the function layer
   a3 (tap-hold-release-keys $tap-time $hold-pinky (multi f11 @tap) lsft $left-hand-keys)
   s3 (tap-hold-release-keys $tap-time $hold-ring (multi f12 @tap) ralt $left-hand-keys)
   f3 (tap-hold-release-keys $tap-time $hold-index (multi f14 @tap) lctl $left-hand-keys)
@@ -113,16 +131,17 @@
   ;; Access `lmet`, `lalt` and `ralt` on normal keyboards without using home row keys:
   esc (tap-hold $tap-time $hold-pinky esc lalt)
   ;; Navigation layer:
-  tab (tap-hold $tap-time $hold-thumb tab (layer-toggle navigation))
+  tab (tap-hold $tap-time $hold-thumb tab (layer-while-held navigation))
   caps (tap-hold $tap-time $hold-pinky caps ralt)
   ;; Function layer:
   lmet (one-shot 2000 (layer-while-held fn))
-  lalt (tap-hold $tap-time $hold-pinky esc (layer-toggle mouse))
+  lalt (tap-hold $tap-time $hold-pinky (multi (layer-switch base) esc @tap) (layer-while-held mouse))
   ;; Symbol layer:
-  spc (tap-hold $tap-time $hold-thumb spc lmet)
+  spc (tap-hold $tap-time $hold-thumb (multi (layer-switch base) spc @tap) lmet)
   ;; Mouse layer:
-  ralt (tap-hold $tap-time $hold-thumb bspc (layer-toggle navigation))
-  rmet (tap-hold $tap-time $hold-thumb rmet rmet)
+  ralt (tap-hold $tap-time $hold-thumb (multi (layer-switch base) bspc @tap) (layer-while-held navigation))
+  ;; Layer switch on the Compose key
+  to_numpad (tap-dance 500 ((multi (layer-switch base) comp @tap) (multi @toggle-numpad)))
 
   ;; Mouse simulation
   mwu (mwheel-up 50 120)
@@ -144,24 +163,38 @@
   fst (movemouse-speed 800) ;; TODO Does this work?
 )
 
-(deflayer nomods
-  q w e r t   y u i o p
-  a s d f g   h j k l ;
-  z x c v b   n m , . /
-  esc tab caps del lsft lmet lalt spc ralt rmet rsft comp
+(defsrc
+    q w e r t   y u i o p
+    a s d f g   h j k l ;
+    z x c v b   n m , . / 
+    esc tab caps del lsft lmet lalt spc ralt rmet rsft prtsc
 )
 
 (deflayer base
    q  w  e  r  t    y  u  i  o  p 
    @a @s @d @f @g   @h @j @k @l @; 
    z  x  c  @v b    n  @m ,  .  /
-   @esc @tab @caps del lsft @lmet @lalt @spc @ralt @rmet rsft comp
+   @esc @tab @caps del lsft @lmet @lalt @spc @ralt @to_numpad rsft @to_numpad
 )
 
 (deflayer symb
-   1    2  3   4   5     6   7   8   9   0
+   1   2   3   4   5     6   7   8   9   0
    @a2 @s2 @d2 @f2 @g2   @h2 @j2 @k2 @l2 @;2
-   `   -   =   @v2 ]     \   @m2 _   _   _
+   `   -   =   @v2 ]     \   @m2 ,   .   /
+   _ _ _ _ _ _ _ _ _ _ _ _
+)
+
+(deflayer symb-flat
+   1    2   3   4   5     6    7    8  9     0
+   esc  ins del tab bspc  left down up right ;
+   `   -    =   [   ]     \    '    ,  .     /
+   _ _ _ _ _ _ _ _ _ _ _ _
+)
+
+(deflayer numpad
+   u   d   e           f   n             kp-  kp7 kp8 kp9 kp+
+   kp/ kp* NumpadEqual tab bspc          nlk  kp4 kp5 kp6 kprt
+   x   a   b           c   RS-;          kp0  kp1 kp2 kp3 kp.
    _ _ _ _ _ _ _ _ _ _ _ _
 )
 
@@ -192,3 +225,11 @@
   XX XX XX XX XX                 pp   prev   next XX XX    
   XX XX XX XX XX XX XX XX XX XX XX XX
 )
+
+(deflayer nomods
+  q w e r t   y u i o p
+  a s d f g   h j k l ;
+  z x c v b   n m , . /
+  esc tab caps del lsft lmet lalt spc ralt rmet rsft prtsc
+)
+
