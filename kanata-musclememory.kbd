@@ -192,9 +192,9 @@
 )
 
 (deflayer numpad
-   u   d   e           f   n             kp-  kp7 kp8 kp9 kp+
+   u   d   e           f   n             kp-  kp7 kp8 kp9 kp0
    kp/ kp* NumpadEqual tab bspc          nlk  kp4 kp5 kp6 kprt
-   x   a   b           c   RS-;          kp0  kp1 kp2 kp3 kp.
+   x   a   b           c   RS-;          kp+  kp1 kp2 kp3 kp.
    _ _ _ _ _ _ _ _ _ _ _ _
 )
 
