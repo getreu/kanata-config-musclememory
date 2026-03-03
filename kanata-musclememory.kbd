@@ -135,13 +135,16 @@
   caps (tap-hold $tap-time $hold-pinky caps ralt)
   ;; Function layer:
   lmet (one-shot 2000 (layer-while-held fn))
-  lalt (tap-hold $tap-time $hold-pinky (multi (layer-switch base) esc @tap) (layer-while-held mouse))
-  ;; Symbol layer:
-  spc (tap-hold $tap-time $hold-thumb (multi (layer-switch base) spc @tap) lmet)
   ;; Mouse layer:
-  ralt (tap-hold $tap-time $hold-thumb (multi (layer-switch base) bspc @tap) (layer-while-held navigation))
+  lalt (tap-hold $tap-time $hold-pinky  esc (layer-while-held mouse))
+  lalt2 (tap-hold $tap-time $hold-pinky (layer-switch base) (layer-while-held mouse))
+  ;; Symbol layer:
+  spc (tap-hold $tap-time $hold-thumb  spc lmet)
+  ;; Mouse layer:
+  ralt (tap-hold $tap-time $hold-thumb bspc (layer-while-held navigation))
   ;; Layer switch on the Compose key
-  to_numpad (tap-dance 500 ((multi (layer-switch base) comp @tap) (multi @toggle-numpad)))
+  comp (tap-dance 500 (comp  (multi @toggle-numpad)))
+  comp2 (tap-dance 500 ((layer-switch base) (multi @toggle-numpad)))
 
   ;; Mouse simulation
   mwu (mwheel-up 50 120)
@@ -174,49 +177,49 @@
    q  w  e  r  t    y  u  i  o  p 
    @a @s @d @f @g   @h @j @k @l @; 
    z  x  c  @v b    n  @m ,  .  /
-   @esc @tab @caps del lsft @lmet @lalt @spc @ralt @to_numpad rsft @to_numpad
+   @esc @tab @caps del lsft @lmet @lalt @spc @ralt @comp rsft @comp
 )
 
 (deflayer symb
    1   2   3   4   5     6   7   8   9   0
    @a2 @s2 @d2 @f2 @g2   @h2 @j2 @k2 @l2 @;2
    `   -   =   @v2 ]     \   @m2 ,   .   /
-   _ _ _ _ _ _ _ _ _ _ _ _
+   _ _ _ _ _ _ @lalt2 _ _ @comp2 _ @comp2
 )
 
 (deflayer symb-flat
    1    2   3   4   5     6    7    8  9     0
    esc  ins del tab bspc  left down up right ;
    `   -    =   [   ]     \    '    ,  .     /
-   _ _ _ _ _ _ _ _ _ _ _ _
+   _ _ _ _ _ _ @lalt2 _ _ @comp2 _ @comp2
 )
 
 (deflayer numpad
    u   d   e           f   n             kp-  kp7 kp8 kp9 kp0
    kp/ kp* NumpadEqual tab bspc          nlk  kp4 kp5 kp6 kprt
    x   a   b           c   RS-;          kp+  kp1 kp2 kp3 kp.
-   _ _ _ _ _ _ _ _ _ _ _ _
+   _ _ _ _ _ _ @lalt2 _ _ @comp2 _ @comp2
 )
 
 (deflayer fn
    f1   f2 f3  f4  f5    f6  f7  f8  f9  f10
    @a3 @s3 f13 @f3 @g3   @h3 @j3 f18 @l3 @;3
    f21 f22 f23 @v3 XX    XX  @m3 XX  XX  XX
-   _ _ _ _ _ _ _ _ _ _ _ _
+   _ _ _ _ _ _ @lalt2 _ _ @comp2 _ @comp2
 )
 
 (deflayer navigation
    XX  XX  XX  XX  XX       home del  ins  end bspc
    @a2 @s2 @d2 @f2 @g2      @h2  @j2  @k2  @l2 @;2
    XX  XX  XX  @v4 XX       XX  @m4  pgup XX  XX
-   _ _ _ _ _ _ _ _ _ _ _ _
+   _ _ _ _ _ _ @lalt2 _ _ @comp2 _ @comp2
 )
 
 (deflayer mouse
   mbck mlft mmid mrgt mfwd  @ms← @ms↓ @ms↑ @ms→ mltp
   mbtp mltp mmtp mrtp mftp  @ma← @ma↓ @ma↑ @ma→ mltp   
   bck  fwd  @fst @sm  XX    @mwl @mwd @mwu @mwr mltp
-  _ _ _ _ _ _ _ _ _ _ _ _
+   _ _ _ _ _ _ @lalt2 _ _ @comp2 _ @comp2
 
 )
 (deflayer system
