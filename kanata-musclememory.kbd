@@ -121,11 +121,6 @@
   ;3 (tap-hold-release-keys $tap-time $hold-pinky (multi f20 @tap) rsft $right-hand-keys)
 
 
-  ;; Home row for the nav layer
-  v4 (tap-hold-release-keys $tap-time $hold-index (multi XX @tap) rmet $left-hand-keys)
-  ;;
-  m4 (tap-hold-release-keys $tap-time $hold-index (multi pgdn @tap) rmet $right-hand-keys)
-  
 
   ;; Other keys
   ;; Access `lmet`, `lalt` and `ralt` on normal keyboards without using home row keys:
@@ -217,7 +212,7 @@
 (deflayer navigation
    XX  XX  XX  XX  XX       home del  ins  end bspc
    @a2 @s2 @d2 @f2 @g2      @h2  @j2  @k2  @l2 @;2
-   XX  XX  XX  @v4 XX       XX  @m4  pgup XX  XX
+   XX  XX  XX  XX  XX       XX  pgdn pgup XX  XX
    _ _ _ _ _ _ @lalt2 _ _ @comp2 _ @comp2
 )
 
