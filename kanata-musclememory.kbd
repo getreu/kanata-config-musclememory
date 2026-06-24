@@ -158,13 +158,6 @@
   ms↓ (movemouse-down 10 1)
   ms→ (movemouse-right 10 1)
 
-  ma↑ (movemouse-accel-up 10 1000 1 9)
-  ma← (movemouse-accel-left 10 1000 1 9)
-  ma↓ (movemouse-accel-down 10 1000 1 9)
-  ma→ (movemouse-accel-right 10 1000 1 9)
-
-  sm (setmouse 32228 32228) ;; TODO Does this work?
-  fst (movemouse-speed 800) ;; TODO Does this work?
 )
 
 (defsrc
@@ -217,11 +210,10 @@
 )
 
 (deflayer mouse
-  mbck mlft mmid mrgt mfwd  @ms← @ms↓ @ms↑ @ms→ mltp
-  mbtp mltp mmtp mrtp mftp  @ma← @ma↓ @ma↑ @ma→ mltp   
-  bck  fwd  @fst @sm  XX    @mwl @mwd @mwu @mwr mltp
+  XX   XX   XX   XX   XX    XX   XX   XX   XX   XX
+  mfwd mlft mmid mrgt mbck  @ms← @ms↓ @ms↑ @ms→ mlft
+  XX   XX   XX   XX   XX    @mwl @mwd @mwu @mwr XX
    _ _ _ _ _ _ @lalt2 _ _ @comp2 _ @comp2
-
 )
 (deflayer system
   XX XX XX XX XX                 XX   brdn   bru  XX XX    
