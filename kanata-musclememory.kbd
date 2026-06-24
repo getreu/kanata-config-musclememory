@@ -146,6 +146,12 @@
   comp (tap-dance 500 (comp  (multi @toggle-numpad)))
   comp2 (tap-dance 500 ((layer-switch base) (multi @toggle-numpad)))
 
+  ;; Number pad arithmetic tap-dance: tap=primary, hold=secondary, tap-then-hold=repeat primary
+  kppl (tap-hold $tap-time $hold-thumb kp+ kp*)
+  kpze (tap-hold $tap-time $hold-thumb kp0 NumpadEqual)
+  kpmi (tap-hold $tap-time $hold-thumb kp- kp/)
+  kpdo (tap-hold $tap-time $hold-thumb kp. kp,)
+
   ;; Mouse simulation
   mwu (mwheel-up 50 120)
   mwd (mwheel-down 50 120)
@@ -195,9 +201,9 @@
 )
 
 (deflayer numpad
-   XX  XX  XX  NumpadEqual  kp*    kp+ kp7 kp8 kp9 kp0
-   esc ins del tab          bspc   nlk kp4 kp5 kp6 kprt
-   XX  XX  XX  XX           kp/    kp- kp1 kp2 kp3 kp.
+   _  _  _  _  _     @kppl kp7 kp8 kp9 @kpze
+   _  _  _  _  _     nlk   kp4 kp5 kp6 kprt
+   _  _  _  _  _     @kpmi kp1 kp2 kp3 @kpdo
    _ _ _ _ _ _ @lalt2 _ _ @comp2 _ @comp2
 )
 
