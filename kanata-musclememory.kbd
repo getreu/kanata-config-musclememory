@@ -44,20 +44,19 @@
 (defvar
   tap-time    200
   hold-thumb  290
-  hold-index  200            
-  hold-middle 230           
-  hold-ring   260          
-  hold-pinky  290  
-  
+  hold-index  200
+  hold-middle 230
+  hold-ring   260
+  hold-pinky  290
+
   ;; This works only with an US keyboard layout.
   left-hand-keys (
-    q w e r t 
+    q w e r t
     z x c   b
   )
 
   right-hand-keys (
     y u i o p
-    ' [ ] \ - =
     n   , . /
   )
 )
@@ -106,7 +105,7 @@
   l2 (tap-hold-release-keys $tap-time $hold-ring (multi right @tap) ralt $right-hand-keys)
   ;2 (tap-hold-release-keys $tap-time $hold-pinky (multi ret @tap) rsft $right-hand-keys)
 
-  
+
   ;; Home row for the function layer
   a3 (tap-hold-release-keys $tap-time $hold-pinky (multi f11 @tap) lsft $left-hand-keys)
   s3 (tap-hold-release-keys $tap-time $hold-ring (multi f12 @tap) ralt $left-hand-keys)
@@ -135,7 +134,7 @@
   lalt2 (tap-hold $tap-time $hold-pinky (layer-switch base) (layer-while-held mouse))
   ;; Symbol layer:
   spc (tap-hold $tap-time $hold-thumb  spc lmet)
-  ;; Mouse layer:
+  ;; Navigation layer:
   ralt (tap-hold $tap-time $hold-thumb bspc (layer-while-held navigation))
   ;; Layer switch on the Compose key
   comp (tap-dance 500 (comp  (multi @toggle-numpad)))
@@ -163,13 +162,13 @@
 (defsrc
     q w e r t   y u i o p
     a s d f g   h j k l ;
-    z x c v b   n m , . / 
+    z x c v b   n m , . /
     esc tab caps del lsft lmet lalt spc ralt rmet rsft prtsc
 )
 
 (deflayer base
-   q  w  e  r  t    y  u  i  o  p 
-   @a @s @d @f @g   @h @j @k @l @; 
+   q  w  e  r  t    y  u  i  o  p
+   @a @s @d @f @g   @h @j @k @l @;
    z  x  c  @v b    n  @m ,  .  /
    @esc @tab @caps del lsft @lmet @lalt @spc @ralt @comp rsft @comp
 )
@@ -189,9 +188,9 @@
 )
 
 (deflayer numpad
-   _  _  _  _  _     @kppl kp7 kp8 kp9 @kpze
-   _  _  _  _  _     nlk   kp4 kp5 kp6 kprt
-   _  _  _  _  _     @kpmi kp1 kp2 kp3 @kpdo
+    q w e r t        @kppl kp7 kp8 kp9 @kpze
+    a s d f g        nlk   kp4 kp5 kp6 kprt
+    z x c v b        @kpmi kp1 kp2 kp3 @kpdo
    _ _ _ _ _ _ @lalt2 _ _ @comp2 _ @comp2
 )
 
@@ -203,29 +202,29 @@
 )
 
 (deflayer navigation
-   XX  XX  XX  XX  XX       home del  ins  end bspc
-   @a2 @s2 @d2 @f2 @g2      @h2  @j2  @k2  @l2 @;2
-   XX  XX  XX  XX  XX       XX  pgdn pgup XX  XX
+   XX  XX  XX  XX  XX    home del  ins  end bspc
+   @a2 @s2 @d2 @f2 @g2   @h2  @j2  @k2  @l2 @;2
+   XX  XX  XX  XX  XX    XX  pgdn pgup XX  XX
    _ _ _ _ _ _ @lalt2 _ _ @comp2 _ @comp2
 )
 
 (deflayer mouse
-  XX   XX   XX   XX   XX    XX   XX   XX   XX   XX
-  mfwd mlft mmid mrgt mbck  @ms← @ms↓ @ms↑ @ms→ mlft
-  XX   XX   XX   XX   XX    @mwl @mwd @mwu @mwr XX
+   XX   XX   XX   XX   XX    XX   XX   XX   XX   XX
+   mfwd mlft mmid mrgt mbck  @ms← @ms↓ @ms↑ @ms→ mlft
+   XX   XX   XX   XX   XX    @mwl @mwd @mwu @mwr XX
    _ _ _ _ _ _ @lalt2 _ _ @comp2 _ @comp2
+
 )
 (deflayer system
-  XX XX XX XX XX                 XX   brdn   bru  XX XX    
-  XX XX XX XX XX                 mute voldwn volu XX XX    
-  XX XX XX XX XX                 pp   prev   next XX XX    
-  XX XX XX XX XX XX XX XX XX XX XX XX
+   XX XX XX XX XX        XX   brdn   bru  XX XX
+   XX XX XX XX XX        mute voldwn volu XX XX
+   XX XX XX XX XX        pp   prev   next XX XX
+   XX XX XX XX XX XX XX XX XX XX XX XX
 )
 
 (deflayer nomods
-  q w e r t   y u i o p
-  a s d f g   h j k l ;
-  z x c v b   n m , . /
-  esc tab caps del lsft lmet lalt spc ralt rmet rsft prtsc
+   q w e r t   y u i o p
+   a s d f g   h j k l ;
+   z x c v b   n m , . /
+   esc tab caps del lsft lmet lalt spc ralt rmet rsft prtsc
 )
-
