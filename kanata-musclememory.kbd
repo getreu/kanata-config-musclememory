@@ -21,22 +21,12 @@
   )
 )
 
-(defalias toggle-symbol
-  (switch
-    ;; If current base is base, switch to target layer
-    ((base-layer symb-flat)) (layer-switch base) break
-
-    ;; Otherwise, switch back to base
-    () (layer-switch symb-flat) break
-  )
-)
-
 (defchordsv2
   (esc 1) (layer-switch base) 300 all-released ()    ;; home row mods on
   (esc 2) (layer-switch nomods) 300 all-released ()  ;; home row mods off
   (spc v) (layer-while-held system) 300 all-released ()    ;; system layer
   (spc m) (layer-while-held system) 300 all-released ()    ;; system layer
-  (lalt ralt) @toggle-symbol 500 all-released ()    ;; symbols layer
+  (lalt ralt) (layer-switch symb-flat) 500 all-released ()    ;; symbols layer
   (lmet rmet) (multi caps @tap) 500 all-released ()     ;; CapsLock
   (lmet prtsc) (multi caps @tap) 500 all-released ()    ;; CapsLock
 )
@@ -138,7 +128,10 @@
   ralt (tap-hold $tap-time $hold-thumb bspc (layer-while-held navigation))
   ;; Layer switch on the Compose key
   comp (tap-dance 500 (comp  (multi @toggle-numpad)))
-  comp2 (tap-dance 500 ((layer-switch base) (multi @toggle-numpad)))
+  comp2 (tap-dance 500 ((layer-switch base) (layer-switch numpad)))
+
+  ;; System layer access from fn layer
+  syst (layer-while-held system)
 
   ;; Number pad arithmetic tap-dance: tap=primary, hold=secondary, tap-then-hold=repeat primary
   kppl (tap-hold $tap-time $hold-thumb kp+ kp*)
@@ -197,7 +190,7 @@
 (deflayer fn
    f1   f2 f3  f4  f5    f6  f7  f8  f9  f10
    @a3 @s3 f13 @f3 @g3   @h3 @j3 f18 @l3 @;3
-   f21 f22 f23 @v3 XX    XX  @m3 XX  XX  XX
+   f21 f22 f23 @v3 XX    XX  @m3 XX  XX  @syst
    _ _ _ _ _ _ @lalt2 _ _ @comp2 _ @comp2
 )
 
@@ -216,7 +209,7 @@
 
 )
 (deflayer system
-   XX XX XX XX XX        XX   brdn   bru  XX XX
+   lrld XX XX XX XX      XX   brdn   bru  XX XX
    XX XX XX XX XX        mute voldwn volu XX XX
    XX XX XX XX XX        pp   prev   next XX XX
    XX XX XX XX XX XX XX XX XX XX XX XX
