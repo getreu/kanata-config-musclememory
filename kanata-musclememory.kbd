@@ -209,10 +209,10 @@
 
 )
 (deflayer system
-   lrld XX XX XX XX      XX   brdn   bru  XX XX
-   XX XX XX XX XX        mute voldwn volu XX XX
-   XX XX XX XX XX        pp   prev   next XX XX
-   XX XX XX XX XX XX XX XX XX XX XX XX
+   XX   XX XX XX XX     XX   brdn   bru  XX XX
+   lrld XX XX XX XX     mute voldwn volu XX XX
+   XX   XX XX XX XX     pp   prev   next XX XX
+   XX   XX XX XX XX XX XX XX XX XX XX XX
 )
 
 (deflayer nomods
