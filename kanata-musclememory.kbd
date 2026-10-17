@@ -29,6 +29,17 @@
   (lalt ralt) (layer-switch symb-flat) 500 all-released ()    ;; symbols layer
   (lmet rmet) (multi caps @tap) 500 all-released ()     ;; CapsLock
   (lmet prtsc) (multi caps @tap) 500 all-released ()    ;; CapsLock
+
+  ;; v1.5.0: same-hand exceptions to the opposite-hands home-row-mod rule
+  ;; (mirrors chordal_hold.c in the QMK/ZMK reference layout). defchordsv2
+  ;; matches on defsrc keys before layer/tap-hold resolution, so it sidesteps
+  ;; the base-vs-symb-layer race that a nested tap-hold-release-keys would hit.
+  (d f) tab  200 first-release (symb-flat numpad fn mouse system nomods)   ;; hold D, tap F -> Tab
+  (k j) down 200 first-release (symb-flat numpad fn mouse system nomods)   ;; hold K, tap J -> Down
+
+  ;; v1.5.0: comma+period -> numpad layer (mirrors combo_numpad/TO(_L2)).
+  ;; Disabled wherever , and . are already remapped to something else.
+  (, .) (layer-switch numpad) 300 all-released (numpad fn navigation mouse system)
 )
 
 (defvar
