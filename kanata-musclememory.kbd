@@ -135,8 +135,18 @@
   lalt2 (tap-hold $tap-time $hold-pinky (layer-switch base) (layer-while-held mouse))
   ;; Symbol layer:
   spc (tap-hold $tap-time $hold-thumb  spc lmet)
-  ;; Navigation layer:
-  ralt (tap-hold $tap-time $hold-thumb bspc (layer-while-held navigation))
+  ;; Plain bspc, not tap-hold: ralt is also a chordsv2 participant (the
+  ;; lalt+ralt symbols-layer chord below), and chordsv2 permanently
+  ;; disables a participant key's own elapsed-time tap-hold resolution --
+  ;; confirmed by testing, not a tuning gap -- so a tap-hold here would
+  ;; silently eat solo bksp-repeat (no other key pressed) until released.
+  ;; A plain mapping has no pending decision for chordsv2 to break: press
+  ;; commits immediately, and holding repeats via the OS's own key-repeat
+  ;; on the sustained output, same as any ordinary key.
+  ;; No hold-to-navigation on this key anymore (renounced in favour of
+  ;; keeping the exact lalt+ralt chord and correct bksp repeat); tab
+  ;; still reaches the navigation layer on hold, unaffected.
+  ralt bspc
   ;; Layer switch on the Compose key
   comp (tap-dance 500 (comp  (multi @toggle-numpad)))
   comp2 (tap-dance 500 ((layer-switch base) (layer-switch numpad)))
