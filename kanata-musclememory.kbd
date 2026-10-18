@@ -54,8 +54,13 @@
   (, .) (layer-switch numpad) 300 all-released (numpad fn navigation mouse system)
 
   ;; The v1.5.0 same-hand exceptions (hold D tap F -> Tab, hold K tap J ->
-  ;; Down, mirroring chordal_hold.c) are gone: they are meant to fire inside
-  ;; typing flow, which is exactly what chords-v2-min-idle suppresses.
+  ;; Down, mirroring chordal_hold.c) no longer need a chord entry here. They
+  ;; could not keep one anyway -- they are meant to fire inside typing flow,
+  ;; which is exactly what chords-v2-min-idle suppresses -- but the gestures
+  ;; still work through the home row mods themselves: f is not in
+  ;; $left-hand-keys, so holding d reaches the symb layer where @f2 taps tab;
+  ;; j is not in $right-hand-keys, so holding k reaches symb where @j2 is
+  ;; down. The chords only ever made that path fire sooner.
 )
 
 (defvar
