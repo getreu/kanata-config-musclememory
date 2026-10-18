@@ -9,6 +9,15 @@
    ;; For defchordsv2
    concurrent-tap-hold     yes
    allow-hardware-repeat   no
+
+   ;; Must stay >= $tap-time (200). After any non-chord activation, chords
+   ;; processing is skipped for this long, so the second press of a
+   ;; tap-then-hold bypasses chordsv2 and reaches the key's own tap-hold with
+   ;; its repress context intact -- that is what makes bksp repeat on ralt
+   ;; work while ralt is also a chord participant. The cost is global: no
+   ;; chord fires within 200 ms of another keystroke, so every chord here has
+   ;; to be a deliberate gesture from a short pause, never mid-typing.
+   chords-v2-min-idle      200
 )
 
 (defalias toggle-numpad
@@ -22,21 +31,31 @@
 )
 
 (defchordsv2
-  (esc 1) (layer-switch base) 300 all-released ()    ;; home row mods on
-  (esc 2) (layer-switch nomods) 300 all-released ()  ;; home row mods off
+  ;; Chord timeouts are deliberately short on every chord whose keys also
+  ;; carry a tap-hold (esc, lalt, ralt, spc). When a chord does not complete
+  ;; within its timeout the presses fall through to the active layer, so the
+  ;; timeout is *added* to that key's own hold timeout: 80 + $hold-thumb
+  ;; (290) = ~370 ms to reach a hold action. Raising it makes the chord
+  ;; easier to hit but the hold sluggish; lowering it does the reverse.
+  (esc 1) (layer-switch base) 80 all-released ()    ;; home row mods on
+  (esc 2) (layer-switch nomods) 80 all-released ()  ;; home row mods off
+  (lalt ralt) (layer-switch symb-flat) 80 all-released ()  ;; symbols layer
+  (spc v) (layer-while-held system) 80 all-released ()     ;; system layer
+  (spc m) (layer-while-held system) 80 all-released ()     ;; system layer
+
+  ;; lmet is a one-shot rather than a tap-hold, so it has no hold timeout to
+  ;; delay and can keep a comfortable window.
   (lmet rmet) (multi caps @tap) 500 all-released ()     ;; CapsLock
   (lmet prtsc) (multi caps @tap) 500 all-released ()    ;; CapsLock
 
-  ;; v1.5.0: same-hand exceptions to the opposite-hands home-row-mod rule
-  ;; (mirrors chordal_hold.c in the QMK/ZMK reference layout). defchordsv2
-  ;; matches on defsrc keys before layer/tap-hold resolution, so it sidesteps
-  ;; the base-vs-symb-layer race that a nested tap-hold-release-keys would hit.
-  (d f) tab  200 first-release (symb-flat numpad fn mouse system nomods)   ;; hold D, tap F -> Tab
-  (k j) down 200 first-release (symb-flat numpad fn mouse system nomods)   ;; hold K, tap J -> Down
-
   ;; v1.5.0: comma+period -> numpad layer (mirrors combo_numpad/TO(_L2)).
   ;; Disabled wherever , and . are already remapped to something else.
+  ;; , and . are plain keys, so nothing to delay here either.
   (, .) (layer-switch numpad) 300 all-released (numpad fn navigation mouse system)
+
+  ;; The v1.5.0 same-hand exceptions (hold D tap F -> Tab, hold K tap J ->
+  ;; Down, mirroring chordal_hold.c) are gone: they are meant to fire inside
+  ;; typing flow, which is exactly what chords-v2-min-idle suppresses.
 )
 
 (defvar
@@ -137,8 +156,9 @@
   ;; The repeat comes from the first parameter, the tap repress timeout: a
   ;; press+release+press within $tap-time holds the tap action instead of
   ;; resolving to the hold action, so the OS repeats bksp while held.
-  ;; Keep ralt out of defchordsv2: chordsv2 handles participant keys before
-  ;; layer/tap-hold handling, which breaks this key's hold-by-timeout.
+  ;; ralt is also a chordsv2 participant (lalt+ralt). That normally breaks
+  ;; both of the above; the short chord timeout and chords-v2-min-idle in
+  ;; defcfg are what keep them working. See the notes there.
   ralt (tap-hold $tap-time $hold-thumb bspc (layer-while-held navigation))
   ;; Layer switch on the Compose key
   comp (tap-dance 500 (comp  (multi @toggle-numpad)))
