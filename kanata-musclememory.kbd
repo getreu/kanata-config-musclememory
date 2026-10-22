@@ -10,13 +10,17 @@
    concurrent-tap-hold     yes
    allow-hardware-repeat   no
 
-   ;; Must stay >= $tap-time (200). After any non-chord activation, chords
-   ;; processing is skipped for this long, so the second press of a
-   ;; tap-then-hold bypasses chordsv2 and reaches the key's own tap-hold with
-   ;; its repress context intact -- that is what makes bksp repeat on ralt
-   ;; work while ralt is also a chord participant. The cost is global: no
-   ;; chord fires within 200 ms of another keystroke, so every chord here has
-   ;; to be a deliberate gesture from a short pause, never mid-typing.
+   ;; After any non-chord activation, chords processing is skipped for this
+   ;; long, so no chord fires within 200 ms of another keystroke. That is the
+   ;; point of it: every chord here stays a deliberate gesture made from a
+   ;; short pause and cannot trigger mid-typing.
+   ;; It does NOT preserve the tap-repress context of a participating key, as
+   ;; an earlier version of this comment claimed. Measured with
+   ;; kanata_simulated_input: bksp repeat on ralt reaches the same ~340 ms gap
+   ;; at min-idle 5 as it does at 200, so $repress-time alone governs that
+   ;; window. Raising this to 450 does widen it to ~420 ms, but only for the
+   ;; chord participants (esc, lalt, ralt, spc) and at the cost of delaying
+   ;; every chord. Not worth it.
    chords-v2-min-idle      200
 )
 
@@ -64,7 +68,25 @@
 )
 
 (defvar
-  tap-time    200
+  tap-time      200
+
+  ;; Tap-repress window for every plain tap-hold key. Tap, then re-press and
+  ;; hold within this many ms and the tap action is *held* instead of the
+  ;; hold action activating -- that is what produces OS key repeat. It is
+  ;; measured from the initial press, not from the release, so the tap
+  ;; duration eats into it. Whether a tap registers at all is governed by the
+  ;; hold timeout, not by this.
+  ;; Cost: within the window the key cannot reach its hold action by being
+  ;; re-pressed, so tap-then-hold spc gives repeating spaces, not lmet.
+  ;; Measured with kanata_simulated_input (usable gap after a 60 ms tap):
+  ;;   at 200 -> ralt/spc/lalt/esc ~180 ms, tab/caps ~100 ms
+  ;;   at 450 -> ralt/spc/lalt/esc ~340 ms, tab/caps ~380 ms
+  ;; Raising chords-v2-min-idle to match would add ~80 ms more, but only for
+  ;; the chord participants (esc, lalt, ralt, spc), and it slows every chord.
+  ;; Not worth it -- left at 200.
+  ;; Does not apply to the home row: those use tap-hold-release-keys with a
+  ;; (multi ... @tap) tap action, which never key-repeats at any value.
+  repress-time  450
   hold-thumb  290
   hold-index  200
   hold-middle 230
@@ -145,26 +167,27 @@
 
   ;; Other keys
   ;; Access `lmet`, `lalt` and `ralt` on normal keyboards without using home row keys:
-  esc (tap-hold $tap-time $hold-pinky esc lalt)
+  esc (tap-hold $repress-time $hold-pinky esc lalt)
   ;; Navigation layer:
-  tab (tap-hold $tap-time $hold-thumb tab (layer-while-held navigation))
-  caps (tap-hold $tap-time $hold-pinky caps ralt)
+  tab (tap-hold $repress-time $hold-thumb tab (layer-while-held navigation))
+  caps (tap-hold $repress-time $hold-pinky caps ralt)
   ;; Function layer:
   lmet (one-shot 2000 (layer-while-held fn))
   ;; Mouse layer:
-  lalt (tap-hold $tap-time $hold-pinky  esc (layer-while-held mouse))
-  lalt2 (tap-hold $tap-time $hold-pinky (layer-switch base) (layer-while-held mouse))
+  lalt (tap-hold $repress-time $hold-pinky  esc (layer-while-held mouse))
+  lalt2 (tap-hold $repress-time $hold-pinky (layer-switch base) (layer-while-held mouse))
   ;; Symbol layer:
-  spc (tap-hold $tap-time $hold-thumb  spc lmet)
+  spc (tap-hold $repress-time $hold-thumb  spc lmet)
   ;; Navigation layer:
   ;; tap -> bksp, tap then hold -> bksp key-repeat, hold -> navigation layer.
   ;; The repeat comes from the first parameter, the tap repress timeout: a
-  ;; press+release+press within $tap-time holds the tap action instead of
+  ;; press+release+press within $repress-time holds the tap action instead of
   ;; resolving to the hold action, so the OS repeats bksp while held.
-  ;; ralt is also a chordsv2 participant (lalt+ralt). That normally breaks
-  ;; both of the above; the short chord timeout and chords-v2-min-idle in
-  ;; defcfg are what keep them working. See the notes there.
-  ralt (tap-hold $tap-time $hold-thumb bspc (layer-while-held navigation))
+  ;; ralt is also a chordsv2 participant (lalt+ralt), which delays its first
+  ;; press by the chord timeout (80) but does not break either gesture --
+  ;; verified with kanata_simulated_input, and independent of
+  ;; chords-v2-min-idle. See the note there.
+  ralt (tap-hold $repress-time $hold-thumb bspc (layer-while-held navigation))
   ;; Layer switch on the Compose key
   comp (tap-dance 500 (comp  (multi @toggle-numpad)))
   comp2 (tap-dance 500 ((layer-switch base) (layer-switch numpad)))
@@ -173,10 +196,10 @@
   syst (layer-while-held system)
 
   ;; Number pad arithmetic tap-dance: tap=primary, hold=secondary, tap-then-hold=repeat primary
-  kppl (tap-hold $tap-time $hold-thumb kp+ kp*)
-  kpze (tap-hold $tap-time $hold-thumb kp0 NumpadEqual)
-  kpmi (tap-hold $tap-time $hold-thumb kp- kp/)
-  kpdo (tap-hold $tap-time $hold-thumb kp. kp,)
+  kppl (tap-hold $repress-time $hold-thumb kp+ kp*)
+  kpze (tap-hold $repress-time $hold-thumb kp0 NumpadEqual)
+  kpmi (tap-hold $repress-time $hold-thumb kp- kp/)
+  kpdo (tap-hold $repress-time $hold-thumb kp. kp,)
 
   ;; Mouse simulation
   mwu (mwheel-up 50 120)
