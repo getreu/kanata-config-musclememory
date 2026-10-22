@@ -207,10 +207,22 @@
   mwl (mwheel-left 50 120)
   mwr (mwheel-right 50 120)
 
-  ms↑ (movemouse-up 10 1)
-  ms← (movemouse-left 10 1)
-  ms↓ (movemouse-down 10 1)
-  ms→ (movemouse-right 10 1)
+  ;; Accelerated like the QMK reference keymap's mousekeys
+  ;; (keyboards/cheapino/config.h MOUSEKEY_* overrides): a 16ms tick
+  ;; (MOUSEKEY_INTERVAL) ramping linearly from 1px (MOUSEKEY_MOVE_DELTA) to
+  ;; 14px (MOUSEKEY_MAX_SPEED * MOVE_DELTA) per tick.
+  ;;
+  ;; Two unit conversions matter here, and getting them wrong is what made the
+  ;; cursor shoot off immediately:
+  ;;   - MOUSEKEY_TIME_TO_MAX counts repeat *ticks*, not milliseconds, so
+  ;;     100 ticks * 16ms = 1600ms for kanata's acceleration-time argument.
+  ;;   - MOUSEKEY_INITIAL_SPEED 2 is dead config in this build: QMK reads it
+  ;;     only in kinetic mode (MK_KINETIC_SPEED), which is not enabled, so the
+  ;;     first tick moves MOUSEKEY_MOVE_DELTA = 1px.
+  ms↑ (movemouse-accel-up 16 1600 1 14)
+  ms← (movemouse-accel-left 16 1600 1 14)
+  ms↓ (movemouse-accel-down 16 1600 1 14)
+  ms→ (movemouse-accel-right 16 1600 1 14)
 
 )
 
