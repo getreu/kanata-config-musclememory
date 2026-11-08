@@ -269,7 +269,7 @@
 )
 
 (deflayer navigation
-   XX  XX  XX  XX  XX    home del  ins  end bspc
+   XX  XX  XX  XX  XX    home ins  del  end bspc
    @a2 @s2 @d2 @f2 @g2   @h2  @j2  @k2  @l2 @;2
    XX  XX  XX  XX  XX    XX  pgdn pgup XX  XX
    _ _ _ _ _ _ @lalt2 _ _ @comp2 _ @comp2
