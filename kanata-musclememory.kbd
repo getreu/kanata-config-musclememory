@@ -43,14 +43,19 @@
   ;; easier to hit but the hold sluggish; lowering it does the reverse.
   (esc 1) (layer-switch base) 80 all-released ()    ;; home row mods on
   (esc 2) (layer-switch nomods) 80 all-released ()  ;; home row mods off
-  (lalt ralt) (layer-switch symb-flat) 80 all-released ()  ;; symbols layer
-  (spc v) (layer-while-held system) 80 all-released ()     ;; system layer
-  (spc m) (layer-while-held system) 80 all-released ()     ;; system layer
 
-  ;; lmet is a one-shot rather than a tap-hold, so it has no hold timeout to
-  ;; delay and can keep a comfortable window.
-  (lmet rmet) (multi caps @tap) 500 all-released ()     ;; CapsLock
-  (lmet prtsc) (multi caps @tap) 500 all-released ()    ;; CapsLock
+  ;; v1.6.0 port of qmk-vial-src-musclememory-cheapino2@c3e6672 (see the
+  ;; article's v1.6.0 changelog): the system layer is now reached via the
+  ;; fn layer's own lalt/ralt (mouse/navigation trigger) keys instead (see
+  ;; the fn deflayer below). Both the old v+space/m+return system-layer
+  ;; chords AND the two chords these keys took over are gone --
+  ;; (lalt ralt) was this config's lalt/ralt-based equivalent of the old
+  ;; [Esc]+[Backspace] symbol-layer chord (lalt taps Esc, ralt taps
+  ;; Backspace), and (lmet rmet)/(lmet prtsc) was the old [FN]+[Compose]
+  ;; CapsLock chord (lmet is the fn-layer one-shot, rmet/prtsc both tap
+  ;; @comp). Replaced by the two below.
+  (v lalt) caps 80 all-released ()             ;; CapsLock (was: fn+compose)
+  (m ralt) (layer-switch symb-flat) 80 all-released ()  ;; symbol layer (was: esc+backspace)
 
   ;; v1.5.0: comma+period -> numpad layer (mirrors combo_numpad/TO(_L2)).
   ;; Disabled wherever , and . are already remapped to something else.
@@ -264,8 +269,8 @@
 (deflayer fn
    f1   f2 f3  f4  f5    f6  f7  f8  f9  f10
    @a3 @s3 f13 @f3 @g3   @h3 @j3 f18 @l3 @;3
-   f21 f22 f23 @v3 XX    XX  @m3 XX  XX  @syst
-   _ _ _ _ _ _ @lalt2 _ _ @comp2 _ @comp2
+   f21 f22 f23 @v3 XX    XX  @m3 XX  XX  XX
+   _ _ _ _ _ _ @syst _ @syst @comp2 _ @comp2
 )
 
 (deflayer navigation
